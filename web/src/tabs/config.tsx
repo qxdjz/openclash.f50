@@ -4,12 +4,34 @@ import { AddConfig } from '../dialog/add-config-item'
 import { SubItem, get, post, put } from '../utils/api'
 
 export const Config = () => {
+    const [name, setName] = useState('')
     const [configs, setConfigs] = useState<SubItem[]>([])
+
+    function formatTime(date: Date) {
+        let year = date.getFullYear()
+        let month = date.getMonth() + 1
+        let day = date.getDate()
+        let hours = date.getHours()
+        let minutes = date.getMinutes()
+        let seconds = date.getSeconds()
+
+        return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day} ${
+            hours < 10 ? '0' + hours : hours
+        }:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`
+    }
 
     const refresh = () => {
         get<SubItem[]>('/yaml/subs').then(({ code, data, msg }) => {
             if (code === 1) {
                 setConfigs(data ?? [])
+            } else {
+                Toast.show({ content: msg })
+            }
+        })
+
+        get<string>('/yaml/name').then(({ code, data, msg }) => {
+            if (code === 1) {
+                setName(data ?? '')
             } else {
                 Toast.show({ content: msg })
             }
@@ -41,30 +63,34 @@ export const Config = () => {
         })
     }
 
-    const update = (item: SubItem) => {
-        Toast.show({ icon: 'loading', duration: 0 })
+    const update = async (item: SubItem) => {
+        Toast.show({ icon: 'loading', duration: 0, content: '更新配置' })
+        const u = await post('/subscribe/update', item)
 
-        post('/subscribe/update', item).then(async ({ code, data, msg }) => {
-            if (code === 1) {
-                refresh()
-            }
+        item.time = formatTime(new Date())
+        await put('/yaml/subs', configs)
 
-            Toast.clear()
-            if (
-                await Dialog.confirm({
-                    title: '确认切换吗？',
-                    content: msg
-                })
-            ) {
-                switchConfig(item)
-            }
-        })
+        if (u.code === 1) {
+            refresh()
+        }
+
+        Toast.clear()
+        switchConfig(item, u.msg ?? '')
     }
 
-    const switchConfig = async (item: SubItem) => {
-        Toast.show({ icon: 'loading', duration: 0 })
+    const switchConfig = async (item: SubItem, msg: string) => {
+        if (
+            !(await Dialog.confirm({
+                title: '确认切换到该配置吗？',
+                content: msg
+            }))
+        ) {
+            return
+        }
+
+        Toast.show({ icon: 'loading', duration: 0, content: '重启服务' })
         {
-            const { code, msg } = await put('/yaml/name', item.name);
+            const { code, msg } = await put('/yaml/name', item.name)
             if (code !== 1) {
                 Toast.show({ content: msg })
                 return
@@ -79,6 +105,7 @@ export const Config = () => {
             }
         }
 
+        refresh()
         Toast.show({ content: '切换成功' })
     }
 
@@ -99,8 +126,12 @@ export const Config = () => {
                         <div className="m_row">
                             <div style={{ padding: '0 10px 0 0', visibility: index == 0 ? 'hidden' : undefined }}>
                                 <Checkbox
-                                    disabled={true}
-                                    checked={true}
+                                    checked={item.name === name}
+                                    onClick={() => {
+                                        if (item.name !== name) {
+                                            switchConfig(item, '确认配置文件已更新，否则切换将导致服务无法启动')
+                                        }
+                                    }}
                                 />
                             </div>
                             <div
@@ -122,6 +153,22 @@ export const Config = () => {
                                 <Space>
                                     <Button
                                         size="small"
+                                        color="primary"
+                                        onClick={async () => {
+                                            const { code, data, msg } = await get<string>(
+                                                `/shell/download/${item.name}/config.yaml`
+                                            )
+                                            if (code !== 1) {
+                                                Toast.show({ content: msg })
+                                                return
+                                            }
+
+                                            Dialog.alert({ content: <pre>${data}</pre> })
+                                        }}>
+                                        查看
+                                    </Button>
+                                    <Button
+                                        size="small"
                                         color="success"
                                         onClick={async () => {
                                             if (
@@ -132,7 +179,7 @@ export const Config = () => {
                                                 update(item)
                                             }
                                         }}>
-                                        切换
+                                        更新
                                     </Button>
                                     <Button
                                         size="small"

@@ -57,7 +57,7 @@ export const ExternalSetting = () => {
                         initialValue={data.port}
                         help="管理页面地址示例: :9090/ui/yacd、:9090/ui/dashboard"
                         rules={[{ pattern: new RegExp(/^[1-9][0-9]{3}$/) }]}>
-                        <Input placeholder="请输入DNS监听端口" />
+                        <Input placeholder="请输入管理端口" />
                     </Form.Item>
                     <Form.Item
                         name="secret"
@@ -65,7 +65,7 @@ export const ExternalSetting = () => {
                         initialValue={data.secret}
                         help="设置您的管理页面登录密钥"
                         rules={[{ pattern: new RegExp(/^[0-9a-zA-Z]{1,10}$/) }]}>
-                        <Input placeholder="请输入流量转发端口" />
+                        <Input placeholder="请输入登录密钥" />
                     </Form.Item>
                 </Form>
             )}

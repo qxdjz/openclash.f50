@@ -1,7 +1,7 @@
 import $ from 'jquery';
 
 const base = "/node"
-// export const base = "http://localhost:3300/node"
+// export const base = "http://192.168.0.1/node"
 
 export type SubItem = { name: string, url: string, time?: string }
 

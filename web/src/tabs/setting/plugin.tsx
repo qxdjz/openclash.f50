@@ -1,4 +1,4 @@
-import { Button, Form, Selector, Switch, Toast } from 'antd-mobile'
+import { Button, Dialog, Form, Selector, Switch, Toast } from 'antd-mobile'
 import React, { useEffect, useState } from 'react'
 import { Setting_External, Setting_Plugin, get, put } from '../../utils/api'
 
@@ -15,14 +15,36 @@ export const PlugingSetting = () => {
         })
     }
 
-    const save = (item: Setting_External) => {
+    const save = async (item: Setting_External) => {
         put('/yaml/setting/plugin', item).then(({ code, msg }) => {
             if (code === 1) {
-                Toast.show({ content: '应用成功，请至插件设置->重启应用，方能生效' })
+                restart()
             } else {
                 Toast.show({ content: msg })
             }
         })
+    }
+
+    const restart = async () => {
+        const flag = await Dialog.confirm({
+            title: '修改成功',
+            content: '应用并重启'
+        })
+
+        if (!flag) {
+            return
+        }
+
+        Toast.show({ icon: 'loading', duration: 0, content: '正在设置' })
+
+        const { code, msg } = await get('/service/start')
+
+        if (code !== 1) {
+            Toast.show({ content: msg })
+            return
+        }
+
+        Toast.show({ content: '重启成功' })
     }
 
     useEffect(refresh, [])
@@ -68,7 +90,7 @@ export const PlugingSetting = () => {
                         rules={[{ required: true }]}>
                         <Selector
                             options={[
-                                { label: '关闭', value: 'off' },
+                                { label: '关闭', value: 'silent' },
                                 { label: '调试', value: 'debug' },
                                 { label: '信息', value: 'info' },
                                 { label: '警告', value: 'warning' },
@@ -76,7 +98,7 @@ export const PlugingSetting = () => {
                             ]}
                         />
                     </Form.Item>
-                    <Form.Item
+                    {/* <Form.Item
                         name="git_url"
                         label="Git地址修改"
                         initialValue={data.git_url ?? ['']}
@@ -91,7 +113,7 @@ export const PlugingSetting = () => {
                                 { label: '加速四', value: 'https://cdn.jsdelivr.net/' }
                             ]}
                         />
-                    </Form.Item>
+                    </Form.Item> */}
                 </Form>
             )}
         </>

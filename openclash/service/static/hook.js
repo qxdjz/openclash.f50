@@ -1,6 +1,5 @@
 setInterval(() => {
     if (window.location.href.indexOf('/index.html#home') >= 0) {
-        console.log('url', window.location.href)
         // 不同的固件版本，Hook点可能需要调整，按需修改即可
         const mark = document.getElementsByClassName('row margin-top-42')
         if (mark && mark.length === 1) {

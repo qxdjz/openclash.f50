@@ -17,15 +17,27 @@ module.exports = {
             }
 
             {
-                const { flag, key } = utils.match(url, 'log')
+                const { flag, key } = utils.match(url, 'run')
                 if (flag && key && key.length > 0) {
-                    // log日志
                     if (fs.existsSync(`${utils.dir('run')}/${key}`)) {
                         const content = fs.readFileSync(`${utils.dir('run')}/${key}`).toString()
 
                         return JSON.stringify({ code: 1, data: content })
                     } else {
                         return JSON.stringify({ code: 0, msg: `文件不存在:${utils.dir('run')}/${key}` })
+                    }
+                }
+            }
+
+            {
+                const { flag, key } = utils.match(url, 'download')
+                if (flag && key && key.length > 0) {
+                    if (fs.existsSync(`${utils.dir('download')}/${key}`)) {
+                        const content = fs.readFileSync(`${utils.dir('download')}/${key}`).toString()
+
+                        return JSON.stringify({ code: 1, data: content })
+                    } else {
+                        return JSON.stringify({ code: 0, msg: `文件不存在:${utils.dir('download')}/${key}` })
                     }
                 }
             }

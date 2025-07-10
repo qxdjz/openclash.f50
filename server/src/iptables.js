@@ -1,4 +1,5 @@
 const fs = require('fs')
+const config = require('./yaml')
 const utils = require('./lib/utils')
 const iptables = `${utils.cmd.iptables} -w 100`
 const ip = `${utils.cmd.ip}`
@@ -16,10 +17,13 @@ const node_start = async () => {
         return
     }
 
+    const gateway = await config.read('gateway')
     await utils.exec(`${iptables} -t nat -N BOX_ND`)
     await utils.exec(`${iptables} -t nat -F BOX_ND`)
     await utils.exec(
-        `${iptables} -t nat -A BOX_ND -p tcp -d 192.168.0.1 --dport 80 -j DNAT --to-destination 192.168.0.1:3300`
+        `${iptables} -t nat -A BOX_ND -p tcp -d ${
+            gateway ?? '192.168.0.1'
+        } --dport 80 -j DNAT --to-destination 192.168.0.1:3300`
     )
     await utils.exec(`${iptables} -t nat -I PREROUTING -i br+ -j BOX_ND`)
 

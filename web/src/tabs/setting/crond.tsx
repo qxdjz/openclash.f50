@@ -4,7 +4,7 @@ import { get } from '../../utils/api'
 
 export const CrondSetting = () => {
     const restart = async () => {
-        Toast.show({ icon: 'loading', duration: 0 })
+        Toast.show({ icon: 'loading', duration: 0, content: '重启中' })
 
         const { code, msg } = await get('/service/start')
 

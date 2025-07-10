@@ -10,15 +10,8 @@ function isNotEmpty(value) {
     return value && value.length > 0
 }
 
-async function _read(key) {
-    const { code, data } = JSON.parse(await config.process('GET', key, ''))
-    if (code === 1) {
-        return data
-    }
-}
-
 async function merge() {
-    const name = await _read('name')
+    const name = await config.read('name')
     if (!name || name.length === 0) {
         utils.log(`暂未指定配置名称`)
         return false
@@ -34,6 +27,7 @@ async function merge() {
 
     obj['tproxy-port'] = 7893
     obj['external-ui'] = './ui'
+    obj['external-controller'] = `0.0.0.0:9091`
     obj['allow-lan'] = true
     obj['bind-address'] = '*'
     obj['ipv6'] = false
@@ -47,9 +41,9 @@ async function merge() {
 
     delete obj['routing-mark']
 
-    const setting = await _read('setting')
+    const setting = await config.read('setting')
     if (setting) {
-        var { overrite, external } = setting
+        var { overrite, external, plugin } = setting
 
         if (overrite) {
             //isNotEmpty(overrite.tproxy) && (obj['tproxy-port'] = Number(overrite.tproxy))
@@ -63,6 +57,10 @@ async function merge() {
         if (external) {
             isNotEmpty(external.port) && (obj['external-controller'] = `0.0.0.0:${external.port}`)
             isNotEmpty(external.secret) && (obj['secret'] = external.secret)
+        }
+
+        if (plugin) {
+            isNotEmpty(plugin.level?.[0]) && (obj['log-level'] = plugin.level?.[0])
         }
     }
 
@@ -80,6 +78,18 @@ module.exports = {
     process: async (method, url, params) => {
         if (method === 'GET') {
             if (url === 'start') {
+                await utils.exec(`${utils.cmd.kill} mihomo >> /dev/null 2>&1`, true)
+                await utils.sleep(1000)
+                await iptables.mihomo.stop()
+
+                if ((await config.read('setting/plugin/switch')) === false) {
+                    utils.log('代理总开关未开启')
+                    return JSON.stringify({
+                        code: 0,
+                        msg: '代理总开关未开启'
+                    })
+                }
+
                 const success = await merge()
                 if (!success) {
                     return JSON.stringify({
@@ -87,8 +97,7 @@ module.exports = {
                         msg: '启动失败,请查看启动日志'
                     })
                 }
-                await utils.exec(`${utils.cmd.kill} mihomo >> /dev/null 2>&1`, true)
-                await utils.sleep(1000)
+
                 await utils.exec(`${utils.cmd.nohup} ${utils.cmd.mihomo} -d ${runDir} > ${runDir}/mihomo.log 2>&1 &`)
                 await utils.sleep(2000)
                 await iptables.mihomo.start()

@@ -54,7 +54,8 @@ export const OverWriteSetting = () => {
                         name="dns"
                         label="DNS监听端口"
                         help="DNS监听端口"
-                        initialValue={data.dns ?? '7874'}
+                        initialValue={data.dns ?? '7893'}
+                        disabled={true}
                         rules={[{ required: true, pattern: new RegExp(/^[1-9][0-9]{3}$/) }]}>
                         <Input placeholder="请输入DNS监听端口" />
                     </Form.Item>
@@ -62,7 +63,8 @@ export const OverWriteSetting = () => {
                         name="tproxy"
                         label="流量转发端口"
                         help="流量转发端口"
-                        initialValue={data.tproxy ?? '7893'}
+                        disabled={true}
+                        initialValue={data.tproxy ?? '1053'}
                         rules={[{ required: true, pattern: new RegExp(/^[1-9][0-9]{3}$/) }]}>
                         <Input placeholder="请输入流量转发端口" />
                     </Form.Item>

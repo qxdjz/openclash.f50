@@ -229,7 +229,15 @@ const process = async (method, key, params) => {
     return JSON.stringify({ code: 0, data: path, msg: '404' })
 }
 
+async function read(key) {
+    const { code, data } = JSON.parse(await process('GET', key, ''))
+    if (code === 1) {
+        return data
+    }
+}
+
 module.exports = {
+    read,
     get,
     post,
     put,
