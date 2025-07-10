@@ -1,0 +1,14 @@
+#!/system/bin/sh
+scripts_dir=`dirname $(realpath $0)`
+
+events=$1
+monitor_dir=$2
+monitor_file=$3
+
+if [ "${monitor_file}" = "disable" ] ; then
+  if [ "${events}" = "d" ] ; then
+    ${scripts_dir}/clash.init start
+  elif [ "${events}" = "n" ] ; then
+    ${scripts_dir}/clash.init stop
+  fi
+fi

@@ -1,0 +1,32 @@
+#!/system/bin/sh
+export PATH="/data/adb/magisk:/data/adb/ksu/bin:/data/adb/ap/bin:$PATH"
+
+scripts_dir=`dirname $(realpath $0)`
+
+wait_until_login(){
+  # we doesn't have the permission to rw "/sdcard" before the user unlocks the screen
+  local test_file="/sdcard/Android/.BOX4TEST"
+  true > "$test_file"
+  while [ ! -f "$test_file" ] ; do
+    true > "$test_file"
+    sleep 1
+  done
+  rm "$test_file"
+
+  while [ ! -f "/data/system/packages.xml" ] ; do
+    sleep 1
+  done
+}
+
+wait_until_login
+
+case "$1" in
+  start)
+    busybox crond -c $scripts_dir/../crond
+    nohup ${scripts_dir}/../bin/node $scripts_dir/../service/index.js listen > /dev/null 2>&1 &
+    ;;
+  stop)
+    ${scripts_dir}/../bin/node $scripts_dir/../service/index.js service clear > /dev/null 2>&1
+    ;;
+esac
+

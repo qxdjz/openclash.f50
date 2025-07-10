@@ -1,0 +1,99 @@
+.innerContainer {
+    width: 100%;
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+    background-color: white;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+.m_title {
+    height: 40px;
+    background-color: #018ad8;
+    border-radius: 10px 10px 0 0;
+    padding: 0 10px;
+    color: white;
+    box-sizing: inherit;
+    font-size: 18px;
+}
+
+.m_status {
+    width: 100%;
+    font-size: 16px;
+    padding: 10px 10px;
+    box-sizing: inherit;
+}
+
+.m_status span {
+    margin: 0 10px;
+    flex-grow: 100;
+}
+
+.m_row {
+    display: flex;
+    display: -webkit-flex;
+    /* Safari */
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+    box-sizing: inherit;
+}
+
+.m_column {
+    display: flex;
+    display: -webkit-flex;
+    /* Safari */
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+    box-sizing: inherit;
+}
+
+.m_equal1 {
+    flex-grow: 1;
+    flex-shrink: 1;
+    width: 0;
+}
+
+.m_equal2 {
+    flex-grow: 2;
+    flex-shrink: 2;
+    width: 0;
+}
+
+.m_equal_full {
+    flex-grow: 100;
+    flex-shrink: 0;
+    width: 0;
+}
+
+.m_show {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.m_add {
+    width: 400px;
+    margin: 0 0 -30px 0;
+}
+
+.m_log {
+    color: #018ad8;
+    font-size: 18px;
+    height: 400px;
+    overflow: auto;
+}
+
+.m_items span {
+    width: 100%;
+    color: gray;
+}
+
+.adm-form {
+    width: 100%;
+}
