@@ -1,10 +1,10 @@
 import { SideBar } from 'antd-mobile'
 import React, { useState } from 'react'
-import { CrondSetting } from './setting/crond'
-import { ExternalSetting } from './setting/external'
-import { OverWriteSetting } from './setting/overwrite'
-import { PlugingSetting } from './setting/plugin'
-import { UpdateSetting } from './setting/update'
+import { CrondSetting } from './crond'
+import { ExternalSetting } from './external'
+import { OverWriteSetting } from './overwrite'
+import { PlugingSetting } from './plugin'
+import { UpdateSetting } from './update'
 
 export const Setting = () => {
     const [key, setKey] = useState('plugin')

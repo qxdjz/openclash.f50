@@ -1,8 +1,8 @@
 import { Button, Checkbox, Dialog, ErrorBlock, List, Modal, Space, Toast } from 'antd-mobile'
 import React, { useEffect, useState } from 'react'
-import { AddConfig } from '../dialog/add-config-item'
-import { Utils } from '../utils'
-import { ApiStore, SubItem } from '../utils/api'
+import { Utils } from '../../utils'
+import { ApiStore, SubItem } from '../../utils/api'
+import { AddConfig } from './add-config'
 
 export const Config = () => {
     const [name, setName] = useState('')
@@ -20,6 +20,16 @@ export const Config = () => {
 
     const add = async (item: SubItem) => {
         const { code, data, msg } = await ApiStore.addSub(item)
+        if (code !== 1) {
+            Toast.show({ content: msg })
+            return
+        }
+        setConfigs(data ?? [])
+        Modal.clear()
+    }
+
+    const edit = async (item: SubItem) => {
+        const { code, data, msg } = await ApiStore.modifySub(item)
         if (code !== 1) {
             Toast.show({ content: msg })
             return
@@ -162,6 +172,24 @@ export const Config = () => {
                                     </Button>
                                     <Button
                                         size="small"
+                                        color="warning"
+                                        onClick={() => {
+                                            Modal.show({
+                                                content: (
+                                                    <AddConfig
+                                                        item={item}
+                                                        confirm={(item) => {
+                                                            edit(item)
+                                                        }}
+                                                    />
+                                                ),
+                                                closeOnMaskClick: true
+                                            })
+                                        }}>
+                                        编辑
+                                    </Button>
+                                    <Button
+                                        size="small"
                                         color="danger"
                                         onClick={() => {
                                             del(item)
@@ -183,7 +211,7 @@ export const Config = () => {
                     Modal.show({
                         content: (
                             <AddConfig
-                                add={(item) => {
+                                confirm={(item) => {
                                     add(item)
                                 }}
                             />

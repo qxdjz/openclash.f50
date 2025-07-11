@@ -1,6 +1,6 @@
 import { Button, SideBar, Space, Toast } from 'antd-mobile'
 import React, { useEffect, useRef, useState } from 'react'
-import { ApiStore } from '../utils/api'
+import { ApiStore } from '../../utils/api'
 
 export const Log = () => {
     const ref = useRef('')

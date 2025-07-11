@@ -11,21 +11,21 @@ module.exports = {
                     return JSON.stringify({ code: 0, msg: '订阅地址不能为空' })
                 }
 
-                const json = JSON.parse(params)
-                if (!json.url || json.url.length === 0) {
+                const { name, url, includes, excludes, invalides } = JSON.parse(params)
+                if (!url || url.length === 0) {
                     return JSON.stringify({ code: 0, msg: '订阅地址不能为空' })
                 }
-                if (!json.name || json.name.length === 0) {
+                if (!name || name.length === 0) {
                     return JSON.stringify({ code: 0, msg: '订阅名称不能为空' })
                 }
 
-                const dir = utils.dir(path.join('download', json.name))
+                const dir = utils.dir(path.join('download', name))
                 const configFile = path.join(dir, 'config.yaml')
 
-                const flag = await utils.download(json.url, configFile)
+                const flag = await utils.download(url, configFile)
 
                 if (!flag) {
-                    return `文件下载失败:${json.url}`
+                    return `文件下载失败:${url}`
                 }
 
                 const content = fs.readFileSync(configFile, 'utf8')
@@ -50,6 +50,26 @@ module.exports = {
                             }
                         }
                     }
+                }
+
+                if (includes && includes.length > 0) {
+                    // 只有节点
+                    const nodes = includes.split(',')
+                    utils.log(`保留节点：${nodes}`)
+                    const proxys = obj['proxies'] ?? []
+                    const groups = obj['proxy-groups'] ?? []
+
+                    for (let i = 0; i < proxys.length; i++) {
+                        //
+                    }
+
+                    for (let i = 0; i < groups.length; i++) {
+                        //
+                    }
+                } else if ((excludes && excludes.length > 0) || (invalides && invalides.length > 0)) {
+                    // 过滤节点
+                    const nodes = [...(excludes?.split(',') ?? []), ...(invalides ?? [])]
+                    utils.log(`过滤节点：${nodes}`)
                 }
 
                 utils.copy(utils.dir('db'), dir)
