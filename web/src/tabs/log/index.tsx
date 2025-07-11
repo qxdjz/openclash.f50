@@ -40,7 +40,7 @@ export const Log = () => {
                     continue
                 }
                 const span = document.createElement('span')
-                span.innerHTML = `<pre>${text}</pre>`
+                span.innerHTML = `<pre style="color: white; border: none; background-color: black;"}>${text}</pre>`
                 log.current.appendChild(span)
             }
         }

@@ -52,26 +52,68 @@ module.exports = {
                     }
                 }
 
-                if (includes && includes.length > 0) {
-                    // 只有节点
-                    const nodes = includes.split(',')
-                    utils.log(`保留节点：${nodes}`)
-                    const proxys = obj['proxies'] ?? []
-                    const groups = obj['proxy-groups'] ?? []
-
-                    for (let i = 0; i < proxys.length; i++) {
-                        //
-                    }
-
-                    for (let i = 0; i < groups.length; i++) {
-                        //
-                    }
-                } else if ((excludes && excludes.length > 0) || (invalides && invalides.length > 0)) {
-                    // 过滤节点
-                    const nodes = [...(excludes?.split(',') ?? []), ...(invalides ?? [])]
-                    utils.log(`过滤节点：${nodes}`)
+                const nodeOf = (proxy, filter) => {
+                    return proxy && proxy.name && proxy.name.indexOf(filter) >= 0
                 }
 
+                let allProxy = obj['proxies'] ?? []
+                let proxys = allProxy
+                if (includes && includes.length > 0) {
+                    // 保留节点
+                    const nodes = includes.split(',')
+                    utils.log(`保留节点：${nodes} 保留前共${proxys.length}个节点`)
+
+                    proxys = proxys.filter((item) => {
+                        const l = nodes.filter((f) => {
+                            return nodeOf(item, f)
+                        })
+                        return l.length > 0
+                    })
+
+                    utils.log(`保留后共${proxys.length}个节点`)
+                }
+
+                // 过滤节点
+                let nodes = invalides ?? []
+                if (excludes && excludes.length > 0) {
+                    nodes = [...nodes, ...(excludes.split(',') ?? [])]
+                }
+                utils.log(`排除节点：${nodes} 排除前共${proxys.length}个节点`)
+                proxys = proxys.filter((item) => {
+                    const l = nodes.filter((f) => {
+                        return nodeOf(item, f)
+                    })
+                    return l.length === 0
+                })
+                utils.log(`排除后共${proxys.length}个节点`)
+
+                obj['proxies'] = proxys
+
+                const excludeProxys = allProxy.filter((p) => {
+                    return (
+                        proxys.filter((i) => {
+                            return i.name === p.name
+                        }).length === 0
+                    )
+                })
+
+                const inExcludeProxy = (p) => {
+                    const list = excludeProxys.filter((item) => {
+                        return p === item.name
+                    })
+                    return list.length > 0
+                }
+
+                const groups = obj['proxy-groups'] ?? []
+                for (let i = 0; i < groups.length; i++) {
+                    const { proxies } = groups[i]
+
+                    groups[i].proxies = proxies?.filter((p) => {
+                        return !inExcludeProxy(p)
+                    })
+                }
+
+                fs.writeFileSync(`${dir}/config.yaml`, yaml.dump(obj), { encoding: 'utf-8' })
                 utils.copy(utils.dir('db'), dir)
                 return await utils.exec(`${utils.cmd.mihomo} -t -d ${dir}`)
             }
