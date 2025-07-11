@@ -3,14 +3,14 @@ import React, { useEffect, useState } from 'react'
 import { Config } from './tabs/config'
 import { Log } from './tabs/log'
 import { Setting } from './tabs/setting'
-import { Status, get } from './utils/api'
+import { ApiStore } from './utils/api'
 
 export const App = () => {
     const [key, setKey] = useState('config')
     const [status, setStatus] = useState('')
 
     const refresh = async () => {
-        const { code, data } = await get<Status>('/shell/status')
+        const { code, data } = await ApiStore.getStatus()
 
         if (code !== 1) {
             setStatus('状态读取失败')
@@ -64,7 +64,7 @@ export const App = () => {
                         <Button
                             size="small"
                             onClick={async () => {
-                                const { code, data, msg } = await get<string>('/shell/run/config.yaml')
+                                const { code, data, msg } = await ApiStore.currentSubYaml()
                                 if (code !== 1) {
                                     Toast.show({ content: msg })
                                     return
@@ -77,18 +77,12 @@ export const App = () => {
                         <Button
                             size="small"
                             onClick={async () => {
-                                const { code, data, msg } = await get<string>('/yaml/setting/external/port')
+                                const { code, data, msg } = await ApiStore.getExternalUrl()
                                 if (code !== 1) {
                                     Toast.show({ content: msg })
                                     return
                                 }
-
-                                const { protocol, hostname } = new URL(window.location.href)
-                                if (data && data.length > 0) {
-                                    window.location.href = `${protocol}//${hostname}:${data}/ui/`
-                                } else {
-                                    window.location.href = `${protocol}//${hostname}:9091/ui/`
-                                }
+                                data && (window.location.href = data)
                             }}>
                             外部控制
                         </Button>

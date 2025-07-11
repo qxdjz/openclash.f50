@@ -1,31 +1,10 @@
-import { Button, Form, Input, Toast } from 'antd-mobile'
-import React, { useEffect, useState } from 'react'
-import { Setting_External, Setting_OverWrite, get, put } from '../../utils/api'
+import { Button, Form, Input } from 'antd-mobile'
+import React from 'react'
+import { Setting_OverWrite } from '../../utils/api'
+import { usePluginConfig } from '../../utils/config'
 
 export const OverWriteSetting = () => {
-    const [data, setData] = useState<Setting_OverWrite | undefined>(undefined)
-
-    const refresh = () => {
-        get<Setting_OverWrite>('/yaml/setting/overrite').then(({ code, data, msg }) => {
-            if (code === 1) {
-                setData(data ?? {})
-            } else {
-                Toast.show({ content: msg })
-            }
-        })
-    }
-
-    const save = (item: Setting_External) => {
-        put('/yaml/setting/overrite', item).then(({ code, msg }) => {
-            if (code === 1) {
-                Toast.show({ content: '应用成功，请至插件设置->重启应用，方能生效' })
-            } else {
-                Toast.show({ content: msg })
-            }
-        })
-    }
-
-    useEffect(refresh, [])
+    const { data, save } = usePluginConfig('setting/overrite', {} as Setting_OverWrite)
 
     return (
         <>

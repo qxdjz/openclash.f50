@@ -1,53 +1,10 @@
-import { Button, Dialog, Form, Selector, Switch, Toast } from 'antd-mobile'
-import React, { useEffect, useState } from 'react'
-import { Setting_External, Setting_Plugin, get, put } from '../../utils/api'
+import { Button, Form, Selector, Switch } from 'antd-mobile'
+import React from 'react'
+import { Setting_Plugin } from '../../utils/api'
+import { usePluginConfig } from '../../utils/config'
 
 export const PlugingSetting = () => {
-    const [data, setData] = useState<Setting_Plugin | undefined>(undefined)
-
-    const refresh = () => {
-        get<Setting_Plugin>('/yaml/setting/plugin').then(({ code, data, msg }) => {
-            if (code === 1) {
-                setData(data ?? {})
-            } else {
-                Toast.show({ content: msg })
-            }
-        })
-    }
-
-    const save = async (item: Setting_External) => {
-        put('/yaml/setting/plugin', item).then(({ code, msg }) => {
-            if (code === 1) {
-                restart()
-            } else {
-                Toast.show({ content: msg })
-            }
-        })
-    }
-
-    const restart = async () => {
-        const flag = await Dialog.confirm({
-            title: '修改成功',
-            content: '应用并重启'
-        })
-
-        if (!flag) {
-            return
-        }
-
-        Toast.show({ icon: 'loading', duration: 0, content: '正在设置' })
-
-        const { code, msg } = await get('/service/start')
-
-        if (code !== 1) {
-            Toast.show({ content: msg })
-            return
-        }
-
-        Toast.show({ content: '重启成功' })
-    }
-
-    useEffect(refresh, [])
+    const { data, save } = usePluginConfig('setting/plugin', {} as Setting_Plugin)
 
     return (
         <>

@@ -1,21 +1,31 @@
 import { Button, SideBar, Space, Toast } from 'antd-mobile'
 import React, { useEffect, useRef, useState } from 'react'
-import { get } from '../utils/api'
+import { ApiStore } from '../utils/api'
 
 export const Log = () => {
     const ref = useRef('')
+    const stopRef = useRef(false)
+    const [stop, setStop] = useState(false)
     const [filter, setFilter] = useState(true)
     const refF = useRef(filter)
     const log = useRef<HTMLDivElement>(null)
 
     const read = async (key?: string) => {
-        key && (ref.current = key)
+        if (stopRef.current) {
+            return
+        }
 
+        key && (ref.current = key)
         if (!ref.current) {
             return
         }
 
-        const { code, data, msg } = await get<string>('/shell/run/' + ref.current)
+        const api = { '1': ApiStore.getNodeLog, '2': ApiStore.getMihomoLog, '3': ApiStore.getCrondLog }[ref.current]
+        if (!api) {
+            return
+        }
+
+        const { code, data, msg } = await api()
         if (code !== 1) {
             Toast.show({ content: msg })
             return
@@ -42,7 +52,7 @@ export const Log = () => {
     }, [filter])
 
     useEffect(() => {
-        read('node.log')
+        read('1')
 
         const id = setInterval(read, 1000)
 
@@ -59,15 +69,15 @@ export const Log = () => {
                         read(key)
                     }}>
                     <SideBar.Item
-                        key={'node.log'}
+                        key={'1'}
                         title={'服务日志'}
                     />
                     <SideBar.Item
-                        key={'mihomo.log'}
+                        key={'2'}
                         title={'核心日志'}
                     />
                     <SideBar.Item
-                        key={'crond.log'}
+                        key={'3'}
                         title={'定时日志'}
                     />
                 </SideBar>
@@ -75,10 +85,15 @@ export const Log = () => {
             <div className="m_column m_equal_full">
                 <div
                     className="m_equal_full"
-                    style={{ overflow: 'auto', width: '100%' }}>
+                    style={{
+                        overflow: 'auto',
+                        width: '100%',
+                        backgroundColor: 'black',
+                        color: 'white'
+                    }}>
                     <div
                         ref={log}
-                        style={{ height: '400px' }}
+                        style={{ height: '400px', width: '100%' }}
                         className="m_items"
                     />
                 </div>
@@ -86,9 +101,12 @@ export const Log = () => {
                     <Space>
                         <Button
                             onClick={() => {
-                                read()
+                                setStop((f) => {
+                                    stopRef.current = !f
+                                    return !f
+                                })
                             }}>
-                            刷新日志
+                            {!stop ? '停止刷新' : '恢复刷新'}
                         </Button>
 
                         <Button
