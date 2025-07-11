@@ -4,6 +4,7 @@ import { Config } from './tabs/config'
 import { Log } from './tabs/log'
 import { Setting } from './tabs/setting'
 import { ApiStore } from './utils/api'
+import { ExternalControl } from './tabs/ui'
 
 export const App = () => {
     const [key, setKey] = useState('config')
@@ -82,7 +83,7 @@ export const App = () => {
                                     Toast.show({ content: msg })
                                     return
                                 }
-                                data && (window.location.href = data)
+                                data && window.open(data)
                             }}>
                             外部控制
                         </Button>
@@ -100,6 +101,12 @@ export const App = () => {
                     key="config"
                     destroyOnClose={true}>
                     <Config />
+                </Tabs.Tab>
+                <Tabs.Tab
+                    title="外部控制"
+                    key="external"
+                    destroyOnClose={true}>
+                    <ExternalControl />
                 </Tabs.Tab>
                 <Tabs.Tab
                     title="运行日志"

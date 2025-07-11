@@ -5,7 +5,8 @@
 -   下载 [openclash.zip](https://github.com/qxdjz/openclash.f50/releases) 文件，通过 magisk 加载安装
 -   重启设备
 -   浏览器访问 192.168.0.1，首次访问需清理浏览器缓存，可看到 openclash 菜单入口即安装成功
-    ![主菜单图片](https://qiniu.bieshuwang.com/clash_f50.png)
+    ![主菜单图片1](https://qiniu.bieshuwang.com/clash_f50.png)
+    ![主菜单图片2](https://qiniu.bieshuwang.com/clash_external.png)
 
 ## 编译方法
 

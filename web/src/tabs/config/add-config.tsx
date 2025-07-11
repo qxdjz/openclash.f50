@@ -17,7 +17,7 @@ export const AddConfig = (props: { item?: SubItem; confirm: (item: SubItem) => v
                         <Button
                             block
                             color="default"
-                            size="large"
+                            size="small"
                             onClick={() => {
                                 Modal.clear()
                             }}>
@@ -28,7 +28,7 @@ export const AddConfig = (props: { item?: SubItem; confirm: (item: SubItem) => v
                             block
                             type="submit"
                             color="primary"
-                            size="large">
+                            size="small">
                             提交
                         </Button>
                     </Space>
