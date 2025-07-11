@@ -2,7 +2,7 @@
 
 ## 安装方法
 
--   下载 openclash.zip 文件，通过 magisk 加载安装
+-   下载 [openclash.zip](https://github.com/qxdjz/openclash.f50/releases) 文件，通过 magisk 加载安装
 -   重启设备
 -   浏览器访问 192.168.0.1，首次访问需清理浏览器缓存，可看到 openclash 菜单入口即安装成功
     ![主菜单图片](https://qiniu.bieshuwang.com/clash_f50.png)
@@ -10,8 +10,8 @@
 ## 编译方法
 
 -   安装 node 开发环境，版本大于等于 16.0.0
--   进入 server 目录，修改完代码，执行 npm run build，重新编译打包，脚本会自动将编译好的文件复制到 openclash/service 目录下
--   进入 web 目录，修改完代码，执行 npm run build，重新编译打包，脚本会自动将编译好的文件复制到 openclash/service/static 目录下
+-   进入 server 目录，安装依赖：npm install, 修改完代码，执行 npm run build，重新编译打包，脚本会自动将编译好的文件复制到 openclash/service 目录下
+-   进入 web 目录，安装依赖：npm install, 修改完代码，执行 npm run build，重新编译打包，脚本会自动将编译好的文件复制到 openclash/service/static 目录下
 -   将本工程除了 server 和 web 目录外的所有其他文件打包成 zip 格式，复制到手机上进行安装即可
 
 ## 常用问题
