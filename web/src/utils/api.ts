@@ -4,7 +4,7 @@ import { Http } from "./http"
 export type Status = { node?: string, mihomo?: string }
 export type SubItem = { name: string, url: string, time?: string, excludes?: string, includes?: string, invalides?: string[] }
 export type Setting_Plugin = { switch?: boolean, level?: string[], git_url?: string[] }
-export type Setting_OverWrite = { dns?: string, proxy?: string, tproxy?: string, http?: string, socks5?: string, mix?: string }
+export type Setting_OverWrite = { dns?: string, proxy?: string, tproxy?: string, http?: string, socks5?: string, mix?: string, "nameserver-policy": string }
 export type Setting_External = { port?: string, secret?: string }
 
 export class ApiStore {

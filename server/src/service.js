@@ -52,6 +52,13 @@ async function merge() {
             isNotEmpty(overrite.http) && (obj['port'] = Number(overrite.http))
             isNotEmpty(overrite.socks5) && (obj['socks-port'] = Number(overrite.socks5))
             isNotEmpty(overrite.mix) && (obj['mixed-port'] = Number(overrite.mix))
+
+            if (isNotEmpty(overrite['nameserver-policy'])) {
+                //const list = obj['dns']['nameserver-policy']
+                //console.log('a', list)
+                // const inserts = overrite['nameserver-policy'].split('\n')
+                // obj['dns']['nameserver-policy'] = [...inserts, ...list]
+            }
         }
 
         if (external) {
