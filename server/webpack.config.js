@@ -3,12 +3,17 @@ const path = require('path')
 module.exports = {
     target: 'node',
     mode: 'production',
-    entry: './src/index.js',
+    entry: './src/index.ts',
     resolve: {
-        extensions: ['.js']
+        extensions: ['.ts', '.js']
     },
     module: {
-        rules: []
+        rules: [
+            {
+                test: /\.(ts|tsx)$/i,
+                use: 'ts-loader'
+            }
+        ]
     },
     output: {
         path: path.resolve(__dirname, '../openclash/service'),

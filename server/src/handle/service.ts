@@ -1,16 +1,18 @@
-const fs = require('fs')
-const yaml = require('js-yaml')
-const config = require('./yaml')
-const iptables = require('./iptables')
-const utils = require('./lib/utils')
+import config, { Method } from './config'
+import fs from 'fs'
+import yaml from 'js-yaml'
+import utils from '../utils'
+import iptables from '../iptables'
+
 const dir = utils.dir('download')
 const runDir = utils.dir('run')
 
-function isNotEmpty(value) {
+function isNotEmpty(value?: string) {
     return value && value.length > 0
 }
 
 async function merge() {
+    utils.log('hello world')
     const name = await config.read('name')
     if (!name || name.length === 0) {
         utils.log(`暂未指定配置名称`)
@@ -19,7 +21,7 @@ async function merge() {
 
     var content = fs.readFileSync(`${dir}/${name}/config.yaml`, 'utf-8')
 
-    var obj = yaml.load(content)
+    var obj: any = yaml.load(content)
     if (!obj || obj === null) {
         utils.log(`原始配置文件不存在:${dir}/${name}/config.yaml`)
         return false
@@ -81,8 +83,8 @@ async function merge() {
     return true
 }
 
-module.exports = {
-    process: async (method, url, params) => {
+export default class Service {
+    public static process = async (method: Method, url: string, params?: string) => {
         if (method === 'GET') {
             if (url === 'start') {
                 await utils.exec(`${utils.cmd.kill} mihomo >> /dev/null 2>&1`, true)
@@ -126,7 +128,7 @@ module.exports = {
                 })
             }
 
-            if (url === 'clear') {
+            if (url === 'kill') {
                 await iptables.mihomo.stop()
                 await iptables.node.stop()
                 await utils.exec(`${utils.cmd.kill} mihomo >> /dev/null 2>&1`, true)

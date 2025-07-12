@@ -11,7 +11,7 @@ until [ $(getprop sys.boot_completed) -eq 1 ] ; do
   sleep 3
 done
 if [ ! -f ${module_dir}/disable ] ; then
-  rm -rf /data/adb/openclash/service/run/*
+  #rm -rf /data/adb/openclash/service/run/*
   echo 1 > /proc/sys/net/ipv6/conf/br0/disable_ipv6
   ${scripts_dir}/clash.init start
 fi

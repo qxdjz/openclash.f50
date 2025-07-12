@@ -1,17 +1,25 @@
-const fs = require('fs')
-const path = require('path')
-const yaml = require('js-yaml')
-const utils = require('./lib/utils')
+import fs from 'fs'
+import path from 'path'
+import yaml from 'js-yaml'
+import utils from '../utils'
+import { Method } from './config'
 
-module.exports = {
-    process: async (method, url, params) => {
+export default class Subscribe {
+    public static process = async (method: Method, url: string, params: string) => {
         if (method === 'POST') {
             if (url === 'update') {
                 if (params.length === 0) {
                     return JSON.stringify({ code: 0, msg: '订阅地址不能为空' })
                 }
 
-                const { name, url, includes, excludes, invalides } = JSON.parse(params)
+                const {
+                    name,
+                    url,
+                    includes,
+                    excludes,
+                    invalides
+                }: { name?: string; url?: string; includes?: string; excludes?: string; invalides?: string[] } =
+                    JSON.parse(params)
                 if (!url || url.length === 0) {
                     return JSON.stringify({ code: 0, msg: '订阅地址不能为空' })
                 }
@@ -30,7 +38,7 @@ module.exports = {
 
                 const content = fs.readFileSync(configFile, 'utf8')
 
-                const obj = yaml.load(content)
+                const obj: any = yaml.load(content)
                 if (!obj || obj === null) {
                     return JSON.stringify({ code: 0, msg: '配置文件下载失败' })
                 }
@@ -52,11 +60,11 @@ module.exports = {
                     }
                 }
 
-                const nodeOf = (proxy, filter) => {
+                const nodeOf = (proxy: { name: string }, filter: string) => {
                     return proxy && proxy.name && proxy.name.indexOf(filter) >= 0
                 }
 
-                let allProxy = obj['proxies'] ?? []
+                let allProxy: { name: string }[] = obj['proxies'] ?? []
                 let proxys = allProxy
                 if (includes && includes.length > 0) {
                     // 保留节点
@@ -97,7 +105,7 @@ module.exports = {
                     )
                 })
 
-                const inExcludeProxy = (p) => {
+                const inExcludeProxy = (p: string) => {
                     const list = excludeProxys.filter((item) => {
                         return p === item.name
                     })
@@ -106,7 +114,7 @@ module.exports = {
 
                 const groups = obj['proxy-groups'] ?? []
                 for (let i = 0; i < groups.length; i++) {
-                    const { proxies } = groups[i]
+                    const { proxies }: { proxies: string[] } = groups[i]
 
                     groups[i].proxies = proxies?.filter((p) => {
                         return !inExcludeProxy(p)

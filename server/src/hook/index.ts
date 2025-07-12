@@ -1,8 +1,8 @@
-const fs = require('fs')
-const utils = require('./lib/utils')
+import fs from 'fs'
+import utils from '../utils'
 
-module.exports = {
-    hook: (proxy, request, response) => {
+export default class Hook {
+    public static process = (proxy: string, request: any, response: any) => {
         const { url } = request
 
         if (utils.match(url, '/js/config/ufi/MU5002/menu.js').flag) {

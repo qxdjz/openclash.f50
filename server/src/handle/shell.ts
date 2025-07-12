@@ -1,9 +1,9 @@
-const fs = require('fs')
-const iptables = require('./iptables')
-const utils = require('./lib/utils')
+import fs from 'fs'
+import utils from '../utils'
+import { Method } from './config'
 
-module.exports = {
-    process: async (method, url, params) => {
+export default class Shell {
+    public static process = async (method: Method, url: string, params?: string) => {
         if (method === 'GET') {
             {
                 const { flag, key } = utils.match(url, 'status')

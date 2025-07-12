@@ -23,10 +23,10 @@ wait_until_login
 case "$1" in
   start)
     busybox crond -c $scripts_dir/../crond
-    nohup ${scripts_dir}/../bin/node $scripts_dir/../service/index.js listen > /dev/null 2>&1 &
+    nohup ${scripts_dir}/../bin/node $scripts_dir/../service/index.js start > /dev/null 2>&1 &
     ;;
   stop)
-    ${scripts_dir}/../bin/node $scripts_dir/../service/index.js service clear > /dev/null 2>&1
+    ${scripts_dir}/../bin/node $scripts_dir/../service/index.js stop > /dev/null 2>&1
     ;;
 esac
 

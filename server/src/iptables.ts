@@ -1,6 +1,7 @@
-const fs = require('fs')
-const config = require('./yaml')
-const utils = require('./lib/utils')
+import fs from 'fs'
+import config from './handle/config'
+import utils from './utils'
+
 const iptables = `${utils.cmd.iptables} -w 100`
 const ip = `${utils.cmd.ip}`
 
@@ -37,7 +38,7 @@ const node_stop = async () => {
     await node_status('初始化路由表清理成功')
 }
 
-const node_status = async (tag) => {
+const node_status = async (tag?: string) => {
     const result = await utils.exec(`${iptables} -t nat -nvL BOX_ND`, true)
     tag && utils.log(tag)
     result && utils.log(result)
@@ -75,7 +76,7 @@ const mihomo_start = async () => {
     await utils.exec(`${iptables} -t nat -A BOX_DNS -p udp --dport 53 -j REDIRECT --to-ports ${clash_dns_port}`)
     await utils.exec(`${iptables} -t nat -I PREROUTING -i br+ -j BOX_DNS`)
 
-    fs.writeFileSync('/proc/sys/net/ipv6/conf/br0/disable_ipv6', '1')
+    fs.writeFileSync(utils.cmd.ipv6, '1')
     await mihomo_status('Lan口代理路由表设置成功')
 }
 
@@ -91,11 +92,11 @@ const mihomo_stop = async () => {
     await utils.exec(`${iptables} -t nat -F BOX_DNS >> /dev/null 2>&1`, true)
     await utils.exec(`${iptables} -t nat -X BOX_DNS >> /dev/null 2>&1`, true)
 
-    fs.writeFileSync('/proc/sys/net/ipv6/conf/br0/disable_ipv6', '0')
+    fs.writeFileSync(utils.cmd.ipv6, '0')
     await mihomo_status('Lan口代理路由表清理成功')
 }
 
-const mihomo_status = async (tag) => {
+const mihomo_status = async (tag?: string) => {
     const proxy = await utils.exec(`${iptables} -t mangle -nvL BOX`, true)
     const dns = await utils.exec(`${iptables} -t nat -nvL BOX_DNS`, true)
     tag && utils.log(tag)
@@ -105,13 +106,14 @@ const mihomo_status = async (tag) => {
     return { proxy, dns }
 }
 
-module.exports = {
-    node: {
+export default class Iptables {
+    public static node = {
         start: node_start,
         stop: node_stop,
         status: node_status
-    },
-    mihomo: {
+    }
+
+    public static mihomo = {
         start: mihomo_start,
         stop: mihomo_stop,
         status: mihomo_status
