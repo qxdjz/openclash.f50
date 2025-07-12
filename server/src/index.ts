@@ -13,7 +13,7 @@ import utils from './utils'
 const app = express()
 
 async function start() {
-    const host = (await config.read('gateway')) ?? '192.168.0.1'
+    const host = `http://${(await config.read('gateway')) ?? '192.168.0.1'}:8080`
     const port = '3300'
 
     // 设置端口

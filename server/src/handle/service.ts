@@ -12,7 +12,6 @@ function isNotEmpty(value?: string) {
 }
 
 async function merge() {
-    utils.log('hello world')
     const name = await config.read('name')
     if (!name || name.length === 0) {
         utils.log(`暂未指定配置名称`)
