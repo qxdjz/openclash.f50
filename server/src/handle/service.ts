@@ -78,6 +78,9 @@ async function merge() {
         }
     }
 
+    if (fs.existsSync(`${dir}/${name}/cache.db`)) {
+        fs.unlinkSync(`${dir}/${name}/cache.db`)
+    }
     utils.copy(`${dir}/${name}`, runDir)
     await utils.exec(`${utils.cmd.unzip} -o ${utils.dir('static')}/ui.zip -d ${runDir}`)
     fs.writeFileSync(`${runDir}/config.yaml`, yaml.dump(obj), { encoding: 'utf-8' })
