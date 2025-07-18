@@ -26,6 +26,19 @@ async function merge() {
         return false
     }
 
+    const subs = (await config.read('subs')) ?? []
+    for (let i = 0; i < subs.length; i++) {
+        if (subs[i].name === name) {
+            const js = subs[i].override
+            if (js && js.length > 0) {
+                utils.log('overrite js', js)
+                eval(`(${js})`)(obj)
+            }
+
+            break
+        }
+    }
+
     obj['tproxy-port'] = 7893
     obj['external-ui'] = './ui'
     obj['external-controller'] = `0.0.0.0:9091`
@@ -53,13 +66,6 @@ async function merge() {
             isNotEmpty(overrite.http) && (obj['port'] = Number(overrite.http))
             isNotEmpty(overrite.socks5) && (obj['socks-port'] = Number(overrite.socks5))
             isNotEmpty(overrite.mix) && (obj['mixed-port'] = Number(overrite.mix))
-
-            if (isNotEmpty(overrite['nameserver-policy'])) {
-                //const list = obj['dns']['nameserver-policy']
-                //console.log('a', list)
-                // const inserts = overrite['nameserver-policy'].split('\n')
-                // obj['dns']['nameserver-policy'] = [...inserts, ...list]
-            }
         }
 
         if (external) {

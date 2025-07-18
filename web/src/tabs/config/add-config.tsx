@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Selector, Space } from 'antd-mobile'
+import { Button, Form, Input, Modal, Selector, Space, TextArea } from 'antd-mobile'
 import React from 'react'
 import { SubItem } from '../../utils/api'
 
@@ -77,6 +77,13 @@ export const AddConfig = (props: { item?: SubItem; confirm: (item: SubItem) => v
                             { label: '官网', value: '官网' }
                         ]}
                     />
+                </Form.Item>
+                <Form.Item
+                    name="override"
+                    label="复写设置"
+                    help={`复写设置,使用js语法,例如function main(config) {config.port = "8080";}`}
+                    initialValue={props.item?.override}>
+                    <TextArea />
                 </Form.Item>
             </Form>
         </div>

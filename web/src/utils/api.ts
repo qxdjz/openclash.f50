@@ -1,11 +1,27 @@
-import { Utils } from "."
-import { Http } from "./http"
+import { Utils } from '.'
+import { Http } from './http'
 
-export type Status = { node?: string, mihomo?: string }
-export type SubItem = { name: string, url: string, time?: string, excludes?: string, includes?: string, invalides?: string[] }
-export type Setting_Plugin = { switch?: boolean, level?: string[], git_url?: string[] }
-export type Setting_OverWrite = { dns?: string, proxy?: string, tproxy?: string, http?: string, socks5?: string, mix?: string, "nameserver-policy": string }
-export type Setting_External = { port?: string, secret?: string }
+export type Status = { node?: string; mihomo?: string }
+export type SubItem = {
+    name: string
+    url: string
+    time?: string
+    excludes?: string
+    includes?: string
+    invalides?: string[]
+    override?: string
+}
+export type Setting_Plugin = { switch?: boolean; level?: string[]; git_url?: string[] }
+export type Setting_OverWrite = {
+    dns?: string
+    proxy?: string
+    tproxy?: string
+    http?: string
+    socks5?: string
+    mix?: string
+    'nameserver-policy': string
+}
+export type Setting_External = { port?: string; secret?: string }
 
 export class ApiStore {
     /** 读取运行状态 */
@@ -61,13 +77,16 @@ export class ApiStore {
             return { code: subs.code, msg: subs.msg }
         }
 
-        if (subs.data?.filter(i => {
-            return i.name === item.name
-        })?.length ?? 0 > 0) {
-            return { code: 0, msg: "配置名称重复" }
+        if (
+            subs.data?.filter((i) => {
+                return i.name === item.name
+            })?.length ??
+            0 > 0
+        ) {
+            return { code: 0, msg: '配置名称重复' }
         }
 
-        const list = [...subs.data ?? [], item];
+        const list = [...(subs.data ?? []), item]
         const rep = await Http.put<unknown>('/yaml/subs', list)
         if (rep.code !== 1) {
             return { code: rep.code, msg: rep.msg }
@@ -82,9 +101,10 @@ export class ApiStore {
         if (subs.code !== 1) {
             return { code: subs.code, msg: subs.msg }
         }
-        const list = subs.data?.filter(i => {
-            return i.name !== item.name
-        }) ?? [];
+        const list =
+            subs.data?.filter((i) => {
+                return i.name !== item.name
+            }) ?? []
         const rep = await Http.put<unknown>('/yaml/subs', list)
         if (rep.code !== 1) {
             return { code: rep.code, msg: rep.msg }
@@ -99,7 +119,7 @@ export class ApiStore {
         if (subs.code !== 1) {
             return { code: subs.code, msg: subs.msg }
         }
-        const list = subs.data ?? [];
+        const list = subs.data ?? []
         for (let i = 0; i < list.length; i++) {
             if (list[i].name === item.name) {
                 list[i] = { ...list[i], ...item }
@@ -129,37 +149,27 @@ export class ApiStore {
 
     /** 获取订阅内容 */
     public static async getSubYaml(name: string) {
-        return await Http.get<string>(
-            `/shell/download/${name}/config.yaml`
-        )
+        return await Http.get<string>(`/shell/download/${name}/config.yaml`)
     }
 
     /** 当前使用的订阅配置文件 */
     public static async currentSubYaml() {
-        return await Http.get<string>(
-            `/shell/run/config.yaml`
-        )
+        return await Http.get<string>(`/shell/run/config.yaml`)
     }
 
     /** 获取NodeLog日志 */
     public static async getNodeLog() {
-        return await Http.get<string>(
-            `/shell/run/node.log`
-        )
+        return await Http.get<string>(`/shell/run/node.log`)
     }
 
     /** 获取MihomoLog日志 */
     public static async getMihomoLog() {
-        return await Http.get<string>(
-            `/shell/run/mihomo.log`
-        )
+        return await Http.get<string>(`/shell/run/mihomo.log`)
     }
 
     /** 获取CrondLog日志 */
     public static async getCrondLog() {
-        return await Http.get<string>(
-            `/shell/run/crond.log`
-        )
+        return await Http.get<string>(`/shell/run/crond.log`)
     }
 
     /** 外部控制链接 */
@@ -177,4 +187,3 @@ export class ApiStore {
         }
     }
 }
-
