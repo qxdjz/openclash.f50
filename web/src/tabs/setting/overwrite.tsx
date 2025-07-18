@@ -71,13 +71,6 @@ export const OverWriteSetting = () => {
                         rules={[{ pattern: new RegExp(/0|^[1-9][0-9]{3}$/) }]}>
                         <Input placeholder="请输入HTTP(S)&SOCKS5 混合代理端" />
                     </Form.Item>
-                    <Form.Item
-                        name="nameserver-policy"
-                        label="nameserver-policy"
-                        help="nameserver-policy"
-                        initialValue={data['nameserver-policy']}>
-                        <TextArea placeholder="请输入自定义域名解析dns服务器" />
-                    </Form.Item>
                 </Form>
             )}
         </>
