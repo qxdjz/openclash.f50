@@ -7,6 +7,22 @@
 -   浏览器访问 192.168.0.1，首次访问需清理浏览器缓存，可看到 openclash 菜单入口即安装成功
     ![主菜单图片1](https://qiniu.bieshuwang.com/clash_f50.png)
     ![主菜单图片2](https://qiniu.bieshuwang.com/clash_external.png)
+-   订阅配置复写:菜单入口：配置订阅->新增配置/编辑配置->复写设置输入框
+    ```javascript
+    function main(config) {
+      const { dns } = config;
+      config["mix-port"] = "9099";
+      if (dns) {
+        if (dns["nameserver-policy"]?.["+.weiguo.wang"]) {
+          dns["nameserver-policy"]["+.weiguo.wang"] = "10.10.10.201";
+        } else {
+          const arr = Object.entries(dns["nameserver-policy"] ?? {});
+          arr.splice(0, 0, ["+.weiguo.wang", "10.10.10.201"]);
+          dns["nameserver-policy"] = Object.fromEntries(arr);
+        }
+      }
+    }
+    ```
 
 ## 编译方法
 
