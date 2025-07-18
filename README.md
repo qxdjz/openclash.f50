@@ -8,7 +8,7 @@
     ![主菜单图片1](https://qiniu.bieshuwang.com/clash_f50.png)
     ![主菜单图片2](https://qiniu.bieshuwang.com/clash_external.png)
 -   订阅配置复写
-    `javascript
+    ```javascript
     function main(config) {
       const { dns } = config;
       config["mix-port"] = "9099";
@@ -22,7 +22,7 @@
         }
       }
     }
-    `
+    ```
 
 ## 编译方法
 
