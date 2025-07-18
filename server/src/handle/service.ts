@@ -3,6 +3,7 @@ import fs from 'fs'
 import yaml from 'js-yaml'
 import utils from '../utils'
 import iptables from '../iptables'
+import { deep } from './deep'
 
 const dir = utils.dir('download')
 const runDir = utils.dir('run')
@@ -31,8 +32,7 @@ async function merge() {
         if (subs[i].name === name) {
             const js = subs[i].override
             if (js && js.length > 0) {
-                utils.log('overrite js', js)
-                eval(`(${js})`)(obj)
+                deep(js, obj)
             }
 
             break
