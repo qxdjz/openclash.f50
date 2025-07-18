@@ -9,13 +9,13 @@
     ![主菜单图片2](https://qiniu.bieshuwang.com/clash_external.png)
 -   订阅配置复写:菜单入口：配置订阅->新增配置/编辑配置->复写设置输入框
     ```javascript
-    set('mix-port', 9099) // 设置值
-    insert('dns/nameserver-policy', { '+.weiguo.wang': '10.10.10.201' }) // 在最前面插入
-    append('dns/nameserver-policy', { '+.weiguo.wang': '10.10.10.201' }) // 在最后面追加，如果有则修改，原key位置保持不变
-    del('dns/fake-ip-range') // 删除
-    del('dns/fake-ip-filter')
-    del('dns/fallback-filter')
-    del('dns/fallback')
+    set('mix-port', 9099); // 设置值
+    insert('dns/nameserver-policy', { '+.weiguo.wang': '10.10.10.201' }); // 在最前面插入
+    append('dns/nameserver-policy', { '+.weiguo.wang': '10.10.10.201' }); // 在最后面追加，如果有则修改，原key位置保持不变
+    del('dns/fake-ip-range'); // 删除
+    del('dns/fake-ip-filter');
+    del('dns/fallback-filter');
+    del('dns/fallback');
     ```
 
 ## 编译方法
