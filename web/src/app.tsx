@@ -5,6 +5,7 @@ import { Log } from './tabs/log'
 import { Setting } from './tabs/setting'
 import { ApiStore } from './utils/api'
 import { ExternalControl } from './tabs/ui'
+import { Utils } from './utils'
 
 export const App = () => {
     const [key, setKey] = useState('config')
@@ -86,6 +87,28 @@ export const App = () => {
                                 data && window.open(data)
                             }}>
                             外部控制
+                        </Button>
+                        <Button
+                            size="small"
+                            onClick={async () => {
+                                const flag = await Dialog.confirm({
+                                    content: '确认重启？'
+                                })
+                                if (!flag) {
+                                    return
+                                }
+
+                                const { code, msg } = await Utils.load(() => {
+                                    return ApiStore.restart()
+                                }, '正在重启')
+
+                                if (code !== 1) {
+                                    Toast.show({ content: msg })
+                                    return
+                                }
+                                Toast.show({ content: '重启成功' })
+                            }}>
+                            重启
                         </Button>
                     </Space>
                 </div>

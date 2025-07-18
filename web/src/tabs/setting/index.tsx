@@ -1,6 +1,5 @@
 import { SideBar } from 'antd-mobile'
 import React, { useState } from 'react'
-import { CrondSetting } from './crond'
 import { ExternalSetting } from './external'
 import { OverWriteSetting } from './overwrite'
 import { PlugingSetting } from './plugin'
@@ -33,10 +32,6 @@ export const Setting = () => {
                         key={'update'}
                         title={'更新管理'}
                     />
-                    <SideBar.Item
-                        key={'restart'}
-                        title={'重启应用'}
-                    />
                 </SideBar>
             </div>
             <div
@@ -46,7 +41,6 @@ export const Setting = () => {
                 {key === 'overwrite' && <OverWriteSetting />}
                 {key === 'external' && <ExternalSetting />}
                 {key === 'update' && <UpdateSetting />}
-                {key === 'restart' && <CrondSetting />}
             </div>
         </div>
     )
