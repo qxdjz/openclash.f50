@@ -175,16 +175,23 @@ export class ApiStore {
 
     /** 外部控制链接 */
     public static async getExternalUrl() {
-        const { code, data, msg } = await Http.get<string>('/yaml/setting/external/port')
+        const { code, data, msg } = await Http.get<any>('/yaml/setting/config')
         if (code !== 1) {
             return { code, msg }
         }
 
+        let url = ''
         const { protocol, hostname } = new URL(window.location.href)
-        if (data && data.length > 0) {
-            return { code: 1, data: `${protocol}//${hostname}:${data}/ui/` }
+        if (data && data.external_port && data.external_port.length > 0) {
+            url = `${protocol}//${hostname}:${data.external_port}/ui/?hostname=${hostname}&port=${data.external_port}`
         } else {
-            return { code: 1, data: `${protocol}//${hostname}:9091/ui/` }
+            url = `${protocol}//${hostname}:9091/ui/?hostname=${hostname}&port=9091`
         }
+        if (data && data.external_secret && data.external_secret.length > 0) {
+            url = `${url}&secret=${data.external_secret}`
+        }
+        url = `${url}&theme=light`
+
+        return { code: 1, data: url }
     }
 }
