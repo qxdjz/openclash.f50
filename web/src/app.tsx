@@ -53,7 +53,7 @@ export const App = () => {
 
             <div className="m_row">
                 <div className="m_equal_full">
-                    <List>
+                    <List style={{ '--border-bottom': 'none' }}>
                         <List.Item
                             description={status}
                             arrowIcon={false}>
@@ -115,6 +115,7 @@ export const App = () => {
             </div>
 
             <Tabs
+                style={{ marginTop: '5px' }}
                 activeKey={key}
                 onChange={(key) => {
                     setKey(key)

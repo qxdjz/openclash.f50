@@ -13,12 +13,13 @@ function isNotEmpty(value?: string) {
 }
 
 async function merge() {
+    utils.log(`准备合并配置文件`)
     const name = await config.read('name')
     if (!name || name.length === 0) {
         utils.log(`暂未指定配置名称`)
         return false
     }
-
+    utils.log(`指定配置名称为${name}`)
     var content = fs.readFileSync(`${dir}/${name}/config.yaml`, 'utf-8')
 
     var obj: any = yaml.load(content)
@@ -27,18 +28,22 @@ async function merge() {
         return false
     }
 
+    utils.log(`读取配置文件成功:${dir}/${name}`)
     const subs = (await config.read('subs')) ?? []
     for (let i = 0; i < subs.length; i++) {
         if (subs[i].name === name) {
             const js = subs[i].override
             if (js && js.length > 0) {
+                utils.log('按照订阅复写配置，准备修改配置文件')
                 deep(js, obj)
+                utils.log('按照订阅复写配置，修改配置文件成功')
             }
 
             break
         }
     }
 
+    // 默认设置
     obj['tproxy-port'] = 7893
     obj['external-ui'] = './ui'
     obj['external-controller'] = `0.0.0.0:9091`
@@ -55,27 +60,35 @@ async function merge() {
 
     delete obj['routing-mark']
 
-    const setting = await config.read('setting')
-    if (setting) {
-        var { overrite, external, plugin } = setting
+    utils.log('默认配置注入成功')
 
-        if (overrite) {
-            //isNotEmpty(overrite.tproxy) && (obj['tproxy-port'] = Number(overrite.tproxy))
-            //isNotEmpty(overrite.dns) && (obj['dns']['listen'] = `0.0.0.0:${overrite.dns}`)
-            isNotEmpty(overrite.proxy) && (obj['redir-port'] = Number(overrite.proxy))
-            isNotEmpty(overrite.http) && (obj['port'] = Number(overrite.http))
-            isNotEmpty(overrite.socks5) && (obj['socks-port'] = Number(overrite.socks5))
-            isNotEmpty(overrite.mix) && (obj['mixed-port'] = Number(overrite.mix))
-        }
+    const cc: {
+        enable?: boolean
+        debug_level?: string[]
+        dns_listen_port?: string
+        proxy_port?: string
+        tproxy_port?: string
+        http_port?: string
+        socks5_port?: string
+        mix_port?: string
+        external_port?: string
+        external_secret?: string
+    } = await config.read('setting/config')
 
-        if (external) {
-            isNotEmpty(external.port) && (obj['external-controller'] = `0.0.0.0:${external.port}`)
-            isNotEmpty(external.secret) && (obj['secret'] = external.secret)
-        }
+    if (cc) {
+        //isNotEmpty(overrite.tproxy) && (obj['tproxy-port'] = Number(overrite.tproxy))
+        //isNotEmpty(overrite.dns) && (obj['dns']['listen'] = `0.0.0.0:${overrite.dns}`)
+        isNotEmpty(cc.proxy_port) && (obj['redir-port'] = Number(cc.proxy_port))
+        isNotEmpty(cc.http_port) && (obj['port'] = Number(cc.http_port))
+        isNotEmpty(cc.socks5_port) && (obj['socks-port'] = Number(cc.socks5_port))
+        isNotEmpty(cc.mix_port) && (obj['mixed-port'] = Number(cc.mix_port))
 
-        if (plugin) {
-            isNotEmpty(plugin.level?.[0]) && (obj['log-level'] = plugin.level?.[0])
-        }
+        isNotEmpty(cc.external_port) && (obj['external-controller'] = `0.0.0.0:${cc.external_port}`)
+        isNotEmpty(cc.external_secret) && (obj['secret'] = cc.external_secret)
+
+        isNotEmpty(cc.debug_level?.[0]) && (obj['log-level'] = cc.debug_level?.[0])
+
+        utils.log(`插件复写配置成功:${JSON.stringify(cc)}`)
     }
 
     if (fs.existsSync(`${dir}/${name}/cache.db`)) {
@@ -85,6 +98,7 @@ async function merge() {
     await utils.exec(`${utils.cmd.unzip} -o ${utils.dir('static')}/ui.zip -d ${runDir}`)
     fs.writeFileSync(`${runDir}/config.yaml`, yaml.dump(obj), { encoding: 'utf-8' })
 
+    utils.log('准备测试配置文件是否正确')
     const check = await utils.exec(`${utils.cmd.mihomo} -t -d ${runDir}`)
     utils.log(check)
 
@@ -99,7 +113,7 @@ export default class Service {
                 await utils.sleep(1000)
                 await iptables.mihomo.stop()
 
-                if ((await config.read('setting/plugin/switch')) === false) {
+                if ((await config.read('setting/config/enable')) === false) {
                     utils.log('代理总开关未开启')
                     return JSON.stringify({
                         code: 0,
@@ -115,9 +129,11 @@ export default class Service {
                     })
                 }
 
+                utils.log('正在启动代理服务')
                 await utils.exec(`${utils.cmd.nohup} ${utils.cmd.mihomo} -d ${runDir} > ${runDir}/mihomo.log 2>&1 &`)
                 await utils.sleep(2000)
                 await iptables.mihomo.start()
+                utils.log('请检查代理服务启动状态')
                 return JSON.stringify({
                     code: 1,
                     data: await utils.exec(`${utils.cmd.pidof}  mihomo`),
@@ -126,9 +142,11 @@ export default class Service {
             }
 
             if (url === 'stop') {
+                utils.log('正在停止代理服务')
                 await utils.exec(`${utils.cmd.kill} mihomo >> /dev/null 2>&1`, true)
                 await utils.sleep(1000)
                 await iptables.mihomo.stop()
+                utils.log('请检查代理服务停止状态')
                 return JSON.stringify({
                     code: 1,
                     data: await utils.exec(`${utils.cmd.pidof}  mihomo`),
@@ -137,10 +155,12 @@ export default class Service {
             }
 
             if (url === 'kill') {
+                utils.log('正在卸载插件')
                 await iptables.mihomo.stop()
                 await iptables.node.stop()
                 await utils.exec(`${utils.cmd.kill} mihomo >> /dev/null 2>&1`, true)
                 await utils.exec(`${utils.cmd.kill} node >> /dev/null 2>&1`, true)
+                utils.log('卸载插件完成')
             }
         }
         return JSON.stringify({ code: 0, data: url, msg: '404' })

@@ -2,6 +2,7 @@ import $ from 'jquery'
 
 const base = '/node'
 // const base = 'http://127.0.0.1:3300/node'
+// const base = 'http://192.168.0.1:3300/node'
 
 function ajax<T>(options: {
     method: 'get' | 'post' | 'put' | 'delete' | 'patch'

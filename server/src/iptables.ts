@@ -12,12 +12,14 @@ const node_start = async () => {
     await node_stop()
     await utils.sleep(200)
 
+    utils.log('正在启动node服务')
     const pid = await utils.exec(`${utils.cmd.pidof} node`)
     if (!pid || pid.length === 0) {
         utils.log('服务未启动,跳过设置初始化路由表')
         return
     }
 
+    utils.log('正在初始化路由表')
     const gateway = await config.read('gateway')
     await utils.exec(`${iptables} -t nat -N BOX_ND`)
     await utils.exec(`${iptables} -t nat -F BOX_ND`)

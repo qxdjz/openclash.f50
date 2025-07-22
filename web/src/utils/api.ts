@@ -11,17 +11,18 @@ export type SubItem = {
     invalides?: string[]
     override?: string
 }
-export type Setting_Plugin = { switch?: boolean; level?: string[]; git_url?: string[] }
-export type Setting_OverWrite = {
-    dns?: string
-    proxy?: string
-    tproxy?: string
-    http?: string
-    socks5?: string
-    mix?: string
-    'nameserver-policy': string
+export type Setting_Config = {
+    enable?: boolean
+    debug_level?: string[]
+    dns_listen_port?: string
+    proxy_port?: string
+    tproxy_port?: string
+    http_port?: string
+    socks5_port?: string
+    mix_port?: string
+    external_port?: string
+    external_secret?: string
 }
-export type Setting_External = { port?: string; secret?: string }
 
 export class ApiStore {
     /** 读取运行状态 */

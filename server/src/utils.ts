@@ -104,6 +104,7 @@ export default class Utils {
 
     public static download = async (url: string, filePath: string) => {
         return new Promise((resolve) => {
+            Utils.log(`正在下载文件：${url}`)
             if (fs.existsSync(filePath)) {
                 fs.unlinkSync(filePath)
             }
