@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react'
 import { Config } from './tabs/config'
 import { Log } from './tabs/log'
 import { Setting } from './tabs/setting'
-import { ApiStore } from './utils/api'
 import { ExternalControl } from './tabs/ui'
 import { Utils } from './utils'
+import { ApiStore } from './utils/api'
 
 export const App = () => {
     const [key, setKey] = useState('config')
@@ -139,7 +139,7 @@ export const App = () => {
                     <Log />
                 </Tabs.Tab>
                 <Tabs.Tab
-                    title="插件设置"
+                    title="设置"
                     key="setting"
                     destroyOnClose={true}>
                     <Setting />

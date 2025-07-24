@@ -81,7 +81,7 @@ export const AddConfig = (props: { item?: SubItem; confirm: (item: SubItem) => v
                 <Form.Item
                     name="override"
                     label="复写设置"
-                    help={`复写设置,使用js语法,例如function main(config) {config.port = "8080";}`}
+                    help={`复写设置, 支持set、insert、append、del方法`}
                     initialValue={props.item?.override}>
                     <TextArea />
                 </Form.Item>

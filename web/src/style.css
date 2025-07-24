@@ -78,7 +78,7 @@
 }
 
 .m_add {
-    width: 400px;
+    width: 100%;
     margin: 0 0 -30px 0;
 }
 
@@ -96,4 +96,8 @@
 
 .adm-form {
     width: 100%;
+}
+
+.adm-center-popup-wrap {
+    min-width: 80%;
 }
